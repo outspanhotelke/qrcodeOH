@@ -1,0 +1,465 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hotel Guest Guide & QR Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1 id="headerHotelName">Your Hotel Name</h1>
+  <p id="headerTagline">Hospitality • Comfort • Memorable Experiences</p>
+</header>
+
+<nav class="no-print">
+  <a class="nav-link" href="#about">About</a>
+  <a class="nav-link" href="#rooms">Rooms</a>
+  <a class="nav-link" href="#conferences">Conferences</a>
+  <a class="nav-link" href="#recreation">Recreation</a>
+  <a class="nav-link" href="#dining">Dining</a>
+  <a class="nav-link" href="#information">Guest Information</a>
+  <button onclick="toggleEditor()">Edit Guide</button>
+  <button class="gold" onclick="window.print()">Print Guide</button>
+</nav>
+
+<main class="container">
+
+<section id="about" class="panel">
+  <h2>Welcome to Our Hotel</h2>
+  <div class="hero">
+    <h3 id="welcomeTitle">Welcome</h3>
+    <p id="hotelDescription"></p>
+  </div>
+  <div class="grid" style="margin-top:15px">
+    <div class="item"><strong>Location</strong><p id="hotelAddress"></p></div>
+    <div class="item"><strong>Contact</strong><p id="hotelPhone"></p><p id="hotelEmail"></p></div>
+    <div class="item"><strong>Website</strong><p id="hotelWebsite"></p></div>
+  </div>
+  <h3>Our Facilities</h3>
+  <div id="facilities" class="grid"></div>
+</section>
+
+<section id="rooms" class="panel">
+  <h2>Rooms & Accommodation</h2>
+  <p class="muted">Explore our room categories and indicative rates.</p>
+  <div id="roomsList" class="grid"></div>
+</section>
+
+<section id="conferences" class="panel">
+  <h2>Conferences & Events</h2>
+  <p>Plan your meeting, conference, training, wedding, or special event with us.</p>
+  <div id="conferencesList" class="grid"></div>
+</section>
+
+<section id="recreation" class="panel">
+  <h2>Recreation & Wellness</h2>
+  <p>Relax, recharge, and enjoy our recreational facilities and activities.</p>
+  <div id="recreationList" class="grid"></div>
+</section>
+
+<section id="dining" class="panel">
+  <h2>Restaurants, Bars & Menus</h2>
+  <p>Discover our dining options and available menu items.</p>
+  <div id="diningList" class="grid"></div>
+</section>
+
+<section id="information" class="panel">
+  <h2>Guest Information</h2>
+  <div id="informationList" class="grid"></div>
+</section>
+
+<section class="panel">
+  <h2>Contact & Assistance</h2>
+  <p id="contactMessage">Our team is happy to assist you during your stay.</p>
+  <p><strong>Telephone:</strong> <span id="contactPhone"></span></p>
+  <p><strong>Email:</strong> <span id="contactEmail"></span></p>
+  <p><strong>Address:</strong> <span id="contactAddress"></span></p>
+</section>
+
+<section id="qrPanel" class="panel qr-wrap no-print">
+  <h2>Generate Your Hotel QR Code</h2>
+  <p>Generate a QR code that opens your complete online guest guide.</p>
+  <div class="notice">
+    <strong>Before generating:</strong> publish this page on a website with a public
+    HTTPS address. A QR code created from a local file on your computer will not
+    give hotel guests access to the online guide.
+  </div>
+  <label for="qrDestination">Public HTTPS guest guide address</label>
+  <input id="qrDestination" type="url" placeholder="https://example.com/guest-guide" />
+  <div class="actions" style="justify-content:center">
+    <button onclick="generateQR()">Generate QR Code</button>
+    <button class="secondary" onclick="downloadQR()">Download QR PNG</button>
+  </div>
+  <div style="margin:20px">
+    <div id="qrcode"></div>
+  </div>
+  <p id="qrStatus" class="muted"></p>
+</section>
+
+<section id="editor" class="panel no-print">
+  <h2>Edit Your Hotel Guest Guide</h2>
+  <p class="muted">Update the fields below and select Save Changes to refresh the guide.</p>
+
+  <h3>Hotel Profile</h3>
+  <div class="grid">
+    <div><label for="fName">Hotel Name</label><input id="fName"></div>
+    <div><label for="fTagline">Tagline</label><input id="fTagline"></div>
+    <div><label for="fAddress">Address / Location</label><input id="fAddress"></div>
+    <div><label for="fPhone">Telephone</label><input id="fPhone"></div>
+    <div><label for="fEmail">Email</label><input id="fEmail" type="email"></div>
+    <div><label for="fWebsite">Website</label><input id="fWebsite" type="url"></div>
+  </div>
+  <label for="fDescription">About the Hotel</label>
+  <textarea id="fDescription"></textarea>
+
+  <label for="fFacilities">Facilities (one per line)</label>
+  <textarea id="fFacilities" placeholder="Swimming pool&#10;Restaurant&#10;Gym&#10;Conference facilities"></textarea>
+
+  <h3>Room Categories & Rates</h3>
+  <p class="muted">One room per line: Room type | Rate | Description | Meal plan</p>
+  <textarea id="fRooms"></textarea>
+
+  <h3>Conference Packages</h3>
+  <p class="muted">One package per line: Package / hall | Rate | Description | Capacity</p>
+  <textarea id="fConferences"></textarea>
+
+  <h3>Recreation & Wellness</h3>
+  <p class="muted">One activity per line: Activity | Rate | Description | Hours</p>
+  <textarea id="fRecreation"></textarea>
+
+  <h3>Restaurants & Menus</h3>
+  <p class="muted">One entry per line: Restaurant / item | Price | Description | Hours</p>
+  <textarea id="fDining"></textarea>
+
+  <h3>Guest Information</h3>
+  <p class="muted">One entry per line: Title | Details</p>
+  <textarea id="fInformation"></textarea>
+
+  <div class="actions">
+    <button onclick="saveGuide()">Save Changes</button>
+    <button class="secondary" onclick="loadEditor()">Discard Unsaved Changes</button>
+    <button class="secondary" onclick="exportData()">Export Backup</button>
+    <button class="secondary" onclick="document.getElementById('importFile').click()">Import Backup</button>
+    <button class="danger" onclick="resetGuide()">Restore Demo Information</button>
+    <input id="importFile" type="file" accept=".json,application/json" class="hidden" onchange="importData(event)">
+  </div>
+  <p id="saveStatus" class="muted"></p>
+</section>
+
+</main>
+
+<footer>
+  <strong id="footerHotelName">Your Hotel Name</strong>
+  <p>Thank you for choosing us. We look forward to making your stay memorable.</p>
+  <small>Hotel Guest Guide</small>
+</footer>
+
+<script>
+const STORAGE_KEY = "hotelGuestGuide_v1";
+
+const demoData = {
+  name: "Your Hotel Name",
+  tagline: "Hospitality • Comfort • Memorable Experiences",
+  address: "Enter your hotel address",
+  phone: "+254 700 000 000",
+  email: "info@example.com",
+  website: "https://example.com",
+  description: "Welcome to our hotel. We are delighted to host you and invite you to discover our accommodation, dining, meetings, and recreational facilities. Please contact our team for assistance and confirmation of current rates.",
+  facilities: [
+    "Accommodation",
+    "Restaurant & Bar",
+    "Conference Facilities",
+    "Swimming Pool",
+    "Gym & Wellness",
+    "Wi-Fi Internet",
+    "Parking",
+    "Room Service"
+  ],
+  rooms: [
+    { name:"Standard Room", price:"KSh 8,000", description:"A comfortable room for a relaxing stay.", extra:"Confirm meal plan with reservations." },
+    { name:"Deluxe Room", price:"KSh 12,000", description:"Extra comfort and space for your stay.", extra:"Confirm meal plan with reservations." },
+    { name:"Suite", price:"KSh 18,000", description:"A spacious option for guests seeking added comfort.", extra:"Confirm meal plan with reservations." }
+  ],
+  conferences: [
+    { name:"Full-Day Conference", price:"KSh 3,500 per person", description:"Meeting facilities and catering package.", extra:"Confirm hall availability and inclusions." },
+    { name:"Half-Day Conference", price:"KSh 2,500 per person", description:"A flexible package for shorter meetings.", extra:"Confirm hall availability and inclusions." },
+    { name:"Meeting Hall", price:"On request", description:"Suitable for meetings, workshops, and events.", extra:"Capacity confirmed on booking." }
+  ],
+  recreation: [
+    { name:"Swimming Pool", price:"Confirm rate", description:"Enjoy a refreshing swim.", extra:"Ask reception for opening hours." },
+    { name:"Gym", price:"Confirm rate", description:"Fitness facilities for your wellness routine.", extra:"Ask reception for opening hours." },
+    { name:"Snooker & Racket Sports", price:"Confirm rate", description:"Recreational activities for guests.", extra:"Availability subject to confirmation." }
+  ],
+  dining: [
+    { name:"Main Restaurant", price:"Menu prices apply", description:"Enjoy meals, refreshments, and daily specials.", extra:"Ask the restaurant for service hours." },
+    { name:"Bar & Lounge", price:"Menu prices apply", description:"A relaxed space for drinks and socialising.", extra:"Ask the team for opening hours." },
+    { name:"Room Service", price:"Menu prices apply", description:"Ask about food and beverages available to your room.", extra:"Contact reception for availability." }
+  ],
+  information: [
+    { name:"Check-in & Check-out", extra:"Please confirm the applicable times with reception." },
+    { name:"Wi-Fi", extra:"Ask reception for the guest network name and access details." },
+    { name:"Payments", extra:"Please confirm accepted payment methods with reception." },
+    { name:"Safety & Security", extra:"Follow posted safety guidance and contact reception if you need assistance." },
+    { name:"Bookings & Reservations", extra:"Contact the hotel directly to confirm availability and current rates." }
+  ]
+};
+
+let guide = loadStoredGuide();
+
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function loadStoredGuide() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return { ...clone(demoData), ...JSON.parse(saved) };
+  } catch (error) {
+    console.warn("Could not read saved guide.", error);
+  }
+  return clone(demoData);
+}
+
+function safeText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  }[char]));
+}
+
+function renderCards(containerId, items, kind) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+  if (!items || items.length === 0) {
+    container.innerHTML = '<p class="muted">Information will be added soon.</p>';
+    return;
+  }
+
+  items.forEach(item => {
+    const card = document.createElement("article");
+    card.className = "item";
+
+    if (kind === "facility") {
+      card.innerHTML = `<h3>${safeText(item)}</h3>`;
+    } else if (kind === "information") {
+      card.innerHTML = `<h3>${safeText(item.name)}</h3><p>${safeText(item.extra)}</p>`;
+    } else {
+      card.innerHTML = `
+        <h3>${safeText(item.name)}</h3>
+        <p class="price">${safeText(item.price)}</p>
+        <p>${safeText(item.description)}</p>
+        <small>${safeText(item.extra)}</small>`;
+    }
+    container.appendChild(card);
+  });
+}
+
+function renderGuide() {
+  document.title = (guide.name || "Hotel") + " | Guest Guide";
+  document.getElementById("headerHotelName").textContent = guide.name;
+  document.getElementById("headerTagline").textContent = guide.tagline;
+  document.getElementById("welcomeTitle").textContent = "Welcome to " + guide.name;
+  document.getElementById("hotelDescription").textContent = guide.description;
+  document.getElementById("hotelAddress").textContent = guide.address;
+  document.getElementById("hotelPhone").textContent = guide.phone;
+  document.getElementById("hotelEmail").textContent = guide.email;
+  document.getElementById("hotelWebsite").textContent = guide.website;
+  document.getElementById("contactPhone").textContent = guide.phone;
+  document.getElementById("contactEmail").textContent = guide.email;
+  document.getElementById("contactAddress").textContent = guide.address;
+  document.getElementById("footerHotelName").textContent = guide.name;
+
+  renderCards("facilities", guide.facilities, "facility");
+  renderCards("roomsList", guide.rooms, "listing");
+  renderCards("conferencesList", guide.conferences, "listing");
+  renderCards("recreationList", guide.recreation, "listing");
+  renderCards("diningList", guide.dining, "listing");
+  renderCards("informationList", guide.information, "information");
+}
+
+function linesToItems(text, type) {
+  return text.split("\n").map(line => line.trim()).filter(Boolean).map(line => {
+    const parts = line.split("|").map(part => part.trim());
+    if (type === "information") {
+      return { name: parts[0] || "", extra: parts.slice(1).join(" | ") || "" };
+    }
+    return {
+      name: parts[0] || "",
+      price: parts[1] || "",
+      description: parts[2] || "",
+      extra: parts[3] || ""
+    };
+  });
+}
+
+function itemsToLines(items, type) {
+  return (items || []).map(item => {
+    if (type === "information") return `${item.name} | ${item.extra}`;
+    return `${item.name} | ${item.price} | ${item.description} | ${item.extra}`;
+  }).join("\n");
+}
+
+function toggleEditor() {
+  const editor = document.getElementById("editor");
+  const isOpening = editor.style.display !== "block";
+  editor.style.display = isOpening ? "block" : "none";
+  if (isOpening) {
+    loadEditor();
+    editor.scrollIntoView({ behavior:"smooth" });
+  }
+}
+
+function loadEditor() {
+  document.getElementById("fName").value = guide.name || "";
+  document.getElementById("fTagline").value = guide.tagline || "";
+  document.getElementById("fAddress").value = guide.address || "";
+  document.getElementById("fPhone").value = guide.phone || "";
+  document.getElementById("fEmail").value = guide.email || "";
+  document.getElementById("fWebsite").value = guide.website || "";
+  document.getElementById("fDescription").value = guide.description || "";
+  document.getElementById("fFacilities").value = (guide.facilities || []).join("\n");
+  document.getElementById("fRooms").value = itemsToLines(guide.rooms, "listing");
+  document.getElementById("fConferences").value = itemsToLines(guide.conferences, "listing");
+  document.getElementById("fRecreation").value = itemsToLines(guide.recreation, "listing");
+  document.getElementById("fDining").value = itemsToLines(guide.dining, "listing");
+  document.getElementById("fInformation").value = itemsToLines(guide.information, "information");
+  document.getElementById("saveStatus").textContent = "";
+}
+
+function saveGuide() {
+  guide = {
+    name: document.getElementById("fName").value.trim() || "Hotel Guest Guide",
+    tagline: document.getElementById("fTagline").value.trim(),
+    address: document.getElementById("fAddress").value.trim(),
+    phone: document.getElementById("fPhone").value.trim(),
+    email: document.getElementById("fEmail").value.trim(),
+    website: document.getElementById("fWebsite").value.trim(),
+    description: document.getElementById("fDescription").value.trim(),
+    facilities: document.getElementById("fFacilities").value.split("\n").map(s => s.trim()).filter(Boolean),
+    rooms: linesToItems(document.getElementById("fRooms").value, "listing"),
+    conferences: linesToItems(document.getElementById("fConferences").value, "listing"),
+    recreation: linesToItems(document.getElementById("fRecreation").value, "listing"),
+    dining: linesToItems(document.getElementById("fDining").value, "listing"),
+    information: linesToItems(document.getElementById("fInformation").value, "information")
+  };
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(guide));
+    renderGuide();
+    document.getElementById("saveStatus").textContent =
+      "Changes saved in this browser. Publish the updated guide online for guests to see the changes.";
+  } catch (error) {
+    document.getElementById("saveStatus").textContent =
+      "The browser could not save the changes. Export a backup and check browser storage settings.";
+  }
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(guide, null, 2)], { type:"application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "hotel-guest-guide-backup.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const imported = JSON.parse(reader.result);
+      if (!imported || typeof imported !== "object" || !imported.name) {
+        throw new Error("Invalid guide file");
+      }
+      guide = { ...clone(demoData), ...imported };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(guide));
+      renderGuide();
+      loadEditor();
+      document.getElementById("saveStatus").textContent = "Backup imported successfully.";
+    } catch (error) {
+      alert("Could not import this file. Please select a valid hotel guest guide JSON backup.");
+    }
+    event.target.value = "";
+  };
+  reader.readAsText(file);
+}
+
+function resetGuide() {
+  if (!confirm("Restore the sample hotel information? Your current browser copy will be replaced.")) return;
+  guide = clone(demoData);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(guide));
+  renderGuide();
+  loadEditor();
+  document.getElementById("saveStatus").textContent = "Demo information restored.";
+}
+
+function generateQR() {
+  const destination = document.getElementById("qrDestination").value.trim();
+  const status = document.getElementById("qrStatus");
+  const output = document.getElementById("qrcode");
+
+  if (!destination) {
+    status.textContent = "Enter the public HTTPS address of your published guest guide.";
+    return;
+  }
+
+  let parsed;
+  try {
+    parsed = new URL(destination);
+  } catch {
+    status.textContent = "Please enter a valid web address.";
+    return;
+  }
+
+  if (parsed.protocol !== "https:") {
+    status.textContent = "For guest access, use a public HTTPS address beginning with https://";
+    return;
+  }
+
+  if (typeof QRCode === "undefined") {
+    status.textContent = "The QR library could not load. Check your internet connection and reload this page.";
+    return;
+  }
+
+  output.innerHTML = "";
+  new QRCode(output, {
+    text: parsed.href,
+    width: 260,
+    height: 260,
+    colorDark: "#382519",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
+  status.textContent = "QR code generated. Scan it with a phone to test the published address.";
+}
+
+function downloadQR() {
+  const output = document.getElementById("qrcode");
+  const canvas = output.querySelector("canvas");
+  const image = output.querySelector("img");
+  let dataURL = "";
+
+  if (canvas) dataURL = canvas.toDataURL("image/png");
+  else if (image && image.src) dataURL = image.src;
+
+  if (!dataURL) {
+    alert("Generate the QR code first.");
+    return;
+  }
+
+  const a = document.createElement("a");
+  a.href = dataURL;
+  a.download = "hotel-guest-guide-qr.png";
+  a.click();
+}
+
+renderGuide();
+</script>
+</body>
+</html>
