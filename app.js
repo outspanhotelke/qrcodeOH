@@ -10,12 +10,12 @@
 const STORAGE_KEY = "hotelGuestGuide_v1";
 
 const demoData = {
-  name: "Your Hotel Name",
-  tagline: "Hospitality • Comfort • Memorable Experiences",
+  name: "The Outspan Hotel",
+  tagline: "Discover the Legacy of Outspan Hotel",
   address: "Enter your hotel address",
-  phone: "+254 700 000 000",
-  email: "info@example.com",
-  website: "https://example.com",
+  phone: "+254 794 15 15 15",
+  email: "info@outspan.ke",
+  website: "https://outspan.ke",
   description:
     "Welcome to our hotel. Discover our accommodation, dining, conferences and recreational facilities. Please contact our team to confirm availability and current rates.",
   facilities: [
