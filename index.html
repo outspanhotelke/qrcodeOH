@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hotel Guest Guide & QR Generator</title>
+<title>Hotel Guest Guide</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -357,107 +357,6 @@ function saveGuide() {
   }
 }
 
-function exportData() {
-  const blob = new Blob([JSON.stringify(guide, null, 2)], { type:"application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "hotel-guest-guide-backup.json";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importData(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const imported = JSON.parse(reader.result);
-      if (!imported || typeof imported !== "object" || !imported.name) {
-        throw new Error("Invalid guide file");
-      }
-      guide = { ...clone(demoData), ...imported };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(guide));
-      renderGuide();
-      loadEditor();
-      document.getElementById("saveStatus").textContent = "Backup imported successfully.";
-    } catch (error) {
-      alert("Could not import this file. Please select a valid hotel guest guide JSON backup.");
-    }
-    event.target.value = "";
-  };
-  reader.readAsText(file);
-}
-
-function resetGuide() {
-  if (!confirm("Restore the sample hotel information? Your current browser copy will be replaced.")) return;
-  guide = clone(demoData);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(guide));
-  renderGuide();
-  loadEditor();
-  document.getElementById("saveStatus").textContent = "Demo information restored.";
-}
-
-function generateQR() {
-  const destination = document.getElementById("qrDestination").value.trim();
-  const status = document.getElementById("qrStatus");
-  const output = document.getElementById("qrcode");
-
-  if (!destination) {
-    status.textContent = "Enter the public HTTPS address of your published guest guide.";
-    return;
-  }
-
-  let parsed;
-  try {
-    parsed = new URL(destination);
-  } catch {
-    status.textContent = "Please enter a valid web address.";
-    return;
-  }
-
-  if (parsed.protocol !== "https:") {
-    status.textContent = "For guest access, use a public HTTPS address beginning with https://";
-    return;
-  }
-
-  if (typeof QRCode === "undefined") {
-    status.textContent = "The QR library could not load. Check your internet connection and reload this page.";
-    return;
-  }
-
-  output.innerHTML = "";
-  new QRCode(output, {
-    text: parsed.href,
-    width: 260,
-    height: 260,
-    colorDark: "#382519",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H
-  });
-  status.textContent = "QR code generated. Scan it with a phone to test the published address.";
-}
-
-function downloadQR() {
-  const output = document.getElementById("qrcode");
-  const canvas = output.querySelector("canvas");
-  const image = output.querySelector("img");
-  let dataURL = "";
-
-  if (canvas) dataURL = canvas.toDataURL("image/png");
-  else if (image && image.src) dataURL = image.src;
-
-  if (!dataURL) {
-    alert("Generate the QR code first.");
-    return;
-  }
-
-  const a = document.createElement("a");
-  a.href = dataURL;
-  a.download = "hotel-guest-guide-qr.png";
-  a.click();
-}
 
 renderGuide();
 </script>
