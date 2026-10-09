@@ -80,25 +80,6 @@
   <p><strong>Address:</strong> <span id="contactAddress"></span></p>
 </section>
 
-<section id="qrPanel" class="panel qr-wrap no-print">
-  <h2>Generate Your Hotel QR Code</h2>
-  <p>Generate a QR code that opens your complete online guest guide.</p>
-  <div class="notice">
-    <strong>Before generating:</strong> publish this page on a website with a public
-    HTTPS address. A QR code created from a local file on your computer will not
-    give hotel guests access to the online guide.
-  </div>
-  <label for="qrDestination">Public HTTPS guest guide address</label>
-  <input id="qrDestination" type="url" placeholder="https://example.com/guest-guide" />
-  <div class="actions" style="justify-content:center">
-    <button onclick="generateQR()">Generate QR Code</button>
-    <button class="secondary" onclick="downloadQR()">Download QR PNG</button>
-  </div>
-  <div style="margin:20px">
-    <div id="qrcode"></div>
-  </div>
-  <p id="qrStatus" class="muted"></p>
-</section>
 
 <section id="editor" class="panel no-print">
   <h2>Edit Your Hotel Guest Guide</h2>
