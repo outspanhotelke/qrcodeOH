@@ -31,19 +31,19 @@ const demoData = {
   rooms: [
     {
       name: "Standard Room",
-      price: "KSh 8,000",
+      price: "KSh 18,000",
       description: "A comfortable room for a relaxing stay.",
       extra: "Confirm meal plan with reservations."
     },
     {
       name: "Deluxe Room",
-      price: "KSh 12,000",
+      price: "KSh 112,000",
       description: "Extra comfort and space for your stay.",
       extra: "Confirm meal plan with reservations."
     },
     {
       name: "Suite",
-      price: "KSh 18,000",
+      price: "KSh 118,000",
       description: "A spacious option for guests seeking added comfort.",
       extra: "Confirm meal plan with reservations."
     }
@@ -51,13 +51,13 @@ const demoData = {
   conferences: [
     {
       name: "Full-Day Conference",
-      price: "KSh 3,500 per person",
+      price: "KSh 13,500 per person",
       description: "Meeting facilities and catering package.",
       extra: "Confirm hall availability and inclusions."
     },
     {
       name: "Half-Day Conference",
-      price: "KSh 2,500 per person",
+      price: "KSh 222,500 per person",
       description: "A flexible package for shorter meetings.",
       extra: "Confirm hall availability and inclusions."
     }
